@@ -23,14 +23,15 @@ jobs:
     - name: Set up Python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.9'  
+        python-version: '3.x'  # Replace with your Python version
 
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install requests json pycountry pandas numpy matplotlib pickle tradingeconomics
+        pip install requests pycountry pandas numpy matplotlib pickle tradingeconomics
 
     - name: Run script
       run: python main.py ${{ github.event.inputs.country_name }} ${{ github.event.inputs.end_year }}
+
 
 
