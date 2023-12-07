@@ -6,6 +6,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 import matplotlib.ticker as mtick
 import pickle
+import tradingeconomics as te
+
 
 with open('model.pkl', 'rb') as file:
     xgb = pickle.load(file)
@@ -37,24 +39,55 @@ def get_latest_gini(country_name):
     return None
 
 
+# def calculate_cumulative_inflation(country, start_year, end_year):
+    # country_name = country.replace(' ', '_')
+    # file_path = f'Data/country_data/historical_country_{country_name}_indicator_Food_Inflation.csv'
+    # df = pd.read_csv(file_path)
+    # df['Year'] = pd.to_datetime(df['DateTime']).dt.year
+    # grouped_data = df.groupby(['Country', 'Year'])
+    # annual_inflation = grouped_data['Value'].mean().round(2)
+    # annual_inflation = annual_inflation.reset_index()
+    # annual_inflation_frame = pd.DataFrame({'Year': annual_inflation['Year'], 'Inflation': annual_inflation['Value']})
+    # f_inflation_rates = annual_inflation_frame[
+        # (annual_inflation_frame['Year'] >= start_year) & (annual_inflation_frame['Year'] <= end_year)][
+        #'Inflation'].tolist()
+
+    # f_inflation_rates = [rate / 100 for rate in f_inflation_rates]
+    # Calculate the cumulative inflation rate
+    # cumulative_inflation = (np.prod(np.array(f_inflation_rates) + 1) - 1) * 100
+
+    # return cumulative_inflation
+
 def calculate_cumulative_inflation(country, start_year, end_year):
     country_name = country.replace(' ', '_')
-    file_path = f'Data/country_data/historical_country_{country_name}_indicator_Food_Inflation.csv'
-    df = pd.read_csv(file_path)
+    api_key = 'e8ff2bc4c8144a3:brx99twm1bw887s'
+    te.login(api_key)
+
+    # Fetching data and converting it to a DataFrame
+    data = te.getHistoricalData(country=country_name, indicator='Food Inflation')
+    df = pd.DataFrame(data)
+
+    # Convert 'DateTime' to datetime and extract the year
     df['Year'] = pd.to_datetime(df['DateTime']).dt.year
-    grouped_data = df.groupby(['Country', 'Year'])
+
+    # Filter for only 'Food Inflation' data within the specified years
+    df_filtered = df[(df['Year'] >= start_year) & (df['Year'] <= end_year) & (df['Category'] == 'Food Inflation')]
+
+    # Group by Country and Year
+    grouped_data = df_filtered.groupby(['Country', 'Year'])
     annual_inflation = grouped_data['Value'].mean().round(2)
     annual_inflation = annual_inflation.reset_index()
-    annual_inflation_frame = pd.DataFrame({'Year': annual_inflation['Year'], 'Inflation': annual_inflation['Value']})
-    f_inflation_rates = annual_inflation_frame[
-        (annual_inflation_frame['Year'] >= start_year) & (annual_inflation_frame['Year'] <= end_year)][
-        'Inflation'].tolist()
 
+    # Calculate cumulative inflation
+    annual_inflation_frame = pd.DataFrame({'Year': annual_inflation['Year'], 'Inflation': annual_inflation['Value']})
+    f_inflation_rates = annual_inflation_frame['Inflation'].tolist()
     f_inflation_rates = [rate / 100 for rate in f_inflation_rates]
-    # Calculate the cumulative inflation rate
     cumulative_inflation = (np.prod(np.array(f_inflation_rates) + 1) - 1) * 100
 
     return cumulative_inflation
+
+
+
 
 
 def get_gdp_per_capita(country_name, year):
