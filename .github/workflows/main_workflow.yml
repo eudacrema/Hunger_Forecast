@@ -18,10 +18,10 @@ jobs:
 
     steps:
     - name: Checkout Repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v3  # Updated to the latest version
 
     - name: Set up Python
-      uses: actions/setup-python@v2
+      uses: actions/setup-python@v4  # Updated to the latest version
       with:
         python-version: '3.9'  
 
@@ -32,3 +32,4 @@ jobs:
 
     - name: Run script
       run: python main.py ${{ github.event.inputs.country_name }} ${{ github.event.inputs.end_year }}
+
