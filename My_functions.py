@@ -12,7 +12,8 @@ import tradingeconomics as te
 with open('model.pkl', 'rb') as file:
     xgb = pickle.load(file)
 
-reshuffled_df = pd.read_excel("Data\\actual_reshuffled.xlsx")
+reshuffled_df = pd.read_excel("Data/actual_reshuffled.xlsx")
+
 def get_pop_endyear(country, end_year):
     file_path = "Data\\country_data\\Global Economy__EX.xlsx"
     # read the Excel file into a pandas dataframe, skipping the first row as it contains unnamed columns
