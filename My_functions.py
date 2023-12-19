@@ -15,14 +15,14 @@ with open('model.pkl', 'rb') as file:
 reshuffled_df = pd.read_excel("Data/actual_reshuffled.xlsx")
 
 def get_pop_endyear(country, end_year):
-    file_path = "Data\\country_data\\Global Economy__EX.xlsx"
+    file_path = "Data/country_data/Global Economy__EX.xlsx"
     # read the Excel file into a pandas dataframe, skipping the first row as it contains unnamed columns
     df = pd.read_excel(file_path, index_col=0)
     pop = df.loc[country, end_year]
     return pop
 
 def get_SOFI(country):
-    file_path = "Data\\SOFI_price.xlsx"
+    file_path = "Data/SOFI_price.xlsx"
     SOFI_df = pd.read_excel(file_path, index_col=0)
     SOFI = SOFI_df.loc[country, 'Cost']
     return SOFI
